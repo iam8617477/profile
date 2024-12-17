@@ -43,6 +43,6 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
             POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
             POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-            docker compose -f docker-compose.yml up -d --build --scale web=3
+            docker compose -f docker-compose.yml up -d --build --scale web=1
 
             echo "Deployment complete!"

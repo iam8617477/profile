@@ -20,48 +20,21 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Connecting to server..."
-            # Проверим подключение
-            if ! ping -c 1 ${{ secrets.REMOTE_HOST }}; then
-              echo "Error: Unable to reach the server."
-              exit 1
-            fi
-
             echo "Running docker system prune..."
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/${{ secrets.profile_repo }}
             docker system prune -f
-            if [ $? -ne 0 ]; then
-              echo "Error: docker system prune failed."
-              exit 1
-            fi
-
-            echo "Checking if 'profile' directory exists..."
             if [ ! -d "profile" ]; then
                 echo "Cloning project repository..."
                 git clone ${{ secrets.GIT_REPO_URL }}
-                if [ $? -ne 0 ]; then
-                  echo "Error: Failed to clone the repository."
-                  exit 1
-                fi
                 cd profile
             else
                 echo "Repository exists. Fetching latest changes..."
                 cd profile
                 git fetch
-                if [ $? -ne 0 ]; then
-                  echo "Error: git fetch failed."
-                  exit 1
-                fi
                 git switch main
-                if [ $? -ne 0 ]; then
-                  echo "Error: git switch failed."
-                  exit 1
-                fi
                 git reset --hard origin/main
-                if [ $? -ne 0 ]; then
-                  echo "Error: git reset failed."
-                  exit 1
                 fi
-            fi
-
             echo "Restarting Docker Compose..."
             SECRET_KEY=${{ secrets.SECRET_KEY }} \
             DEBUG=${{ secrets.DEBUG }} \
@@ -71,9 +44,5 @@ jobs:
             POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
             POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
             docker-compose -f docker-compose.yml up -d --build --scale web=3
-            if [ $? -ne 0 ]; then
-              echo "Error: docker-compose up failed."
-              exit 1
-            fi
 
             echo "Deployment complete!"

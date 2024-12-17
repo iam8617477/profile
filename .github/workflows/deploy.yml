@@ -1,0 +1,48 @@
+name: Deploy Django App to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH into Server and Deploy
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Connecting to server..."
+            echo "Running docker system prune..."
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/${{ secrets.profile_repo }}
+            docker system prune -f
+            if [ ! -d "profile" ]; then
+                echo "Cloning project repository..."
+                git clone ${{ secrets.GIT_REPO_URL }}
+                cd profile
+            else
+                echo "Repository exists. Fetching latest changes..."
+                cd profile
+                git fetch
+                git switch main
+                git reset --hard origin/main
+            fi
+            echo "Restarting Docker Compose..."
+            SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            DEBUG=${{ secrets.DEBUG }} \
+            POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+            POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+            docker-compose -f docker-compose.yml up -d --build --scale web=3
+
+            echo "Deployment complete!"

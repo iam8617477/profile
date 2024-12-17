@@ -22,7 +22,7 @@ jobs:
             echo "Connecting to server..."
             echo "Running docker system prune..."
             eval "$(ssh-agent -s)"
-            ssh-add ~/.ssh/${{ secrets.profile_repo }}
+            ssh-add ~/.ssh/${{ secrets.GIT_REPO_KEYNAME }}
             docker system prune -f
             if [ ! -d "profile" ]; then
                 echo "Cloning project repository..."
@@ -43,6 +43,6 @@ jobs:
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
             POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
             POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-            docker-compose -f docker-compose.yml up -d --build --scale web=3
+            docker compose -f docker-compose.yml up -d --build --scale web=3
 
             echo "Deployment complete!"

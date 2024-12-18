@@ -25,7 +25,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DEBUG'] == 'True'
 
-ALLOWED_HOSTS = [os.environ['REMOTE_HOST']]
+ALLOWED_HOSTS = [os.environ['REMOTE_HOST'], os.environ['REMOTE_HOST_NAME']]
 
 
 # Application definition

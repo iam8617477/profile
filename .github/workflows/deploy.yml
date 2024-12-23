@@ -6,8 +6,58 @@ on:
       - main
 
 jobs:
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+
+    env:
+      DATABASE_URL: postgres://test_user:test_password@localhost:5432/test_db
+      DJANGO_SETTINGS_MODULE: app.settings
+      SECRET_KEY: ${{ secrets.SECRET_KEY }} \
+      DEBUG: ${{ secrets.DEBUG }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Wait for PostgreSQL
+        run: |
+          until pg_isready -h localhost -p 5432 -U test_user; do
+            echo "Waiting for PostgreSQL..."
+            sleep 1
+          done
+
+      - name: Run migrations
+        run: |
+          python manage.py migrate --no-input
+
+      - name: Run tests
+        run: |
+          pytest
+
   deploy:
     runs-on: ubuntu-latest
+    needs: test
 
     steps:
       - name: SSH into Server and Deploy

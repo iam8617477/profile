@@ -28,7 +28,8 @@ DEBUG = os.environ['DEBUG'] == 'True'
 if DEBUG:
     ALLOWED_HOSTS = ['*']
 else:
-    ALLOWED_HOSTS = [os.environ['REMOTE_HOST'], os.environ['REMOTE_HOST_NAME']]
+    ALLOWED_HOSTS = [os.environ['REMOTE_HOST_NAME']]
+    CSRF_TRUSTED_ORIGINS = [f"https://{os.environ['REMOTE_HOST_NAME']}"]
 
 # Application definition
 

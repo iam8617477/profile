@@ -2,9 +2,12 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             gunicorn app.wsgi:application --bind 0.0.0.0:8000"
+      sh -c "
+        echo 'Waiting 15 seconds before starting...';
+        sleep 15;
+        python manage.py migrate &&
+        python manage.py collectstatic --noinput &&
+        gunicorn app.wsgi:application --bind 0.0.0.0:8000"
     expose:
       - '8000'
     depends_on:
@@ -54,6 +57,7 @@ services:
       - '443:443'
     depends_on:
       - fill_nginx_conf
+      - web
 
   certbot:
     image: certbot/certbot

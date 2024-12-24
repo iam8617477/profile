@@ -89,6 +89,7 @@ jobs:
                 git switch main
                 git reset --hard origin/main
                 fi
+            docker compose down || echo "Containers are already stopped or not running"
             echo "Restarting Docker Compose..."
             SECRET_KEY=${{ secrets.SECRET_KEY }} \
             DEBUG=${{ secrets.DEBUG }} \

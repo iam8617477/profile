@@ -1,6 +1,8 @@
+from django.urls import reverse
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Tag, Command, Note
+
+from .models import Tag, Command, Note, File
 
 
 @admin.register(Tag)
@@ -67,3 +69,15 @@ class NoteAdmin(admin.ModelAdmin):
         return short_text(obj.link)
 
     short_link.short_description = 'Link'
+
+
+@admin.register(File)
+class FileAdmin(admin.ModelAdmin):
+    list_display = ('title', 'uploaded_at', 'file', 'uuid', 'download_link')
+    search_fields = ('title', 'uuid')
+
+    def download_link(self, obj):
+        url = reverse('download_file', args=[obj.uuid])
+        return format_html('<a href="{}" target="_blank">Download</a>', url)
+    download_link.short_description = 'Download Link'
+

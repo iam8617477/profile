@@ -52,6 +52,7 @@ services:
       - letsencrypt:/etc/letsencrypt:ro
       - static_volume:/app/staticfiles
       - certbot-challenges:/usr/share/nginx/html/.well-known/acme-challenge
+      - ./media:/app/media
     ports:
       - '80:80'
       - '443:443'

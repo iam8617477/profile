@@ -27,6 +27,12 @@ def display_tags(obj):
 display_tags.short_description = 'Tags'
 
 
+def short_text(text):
+    if text:
+        return text[:75] + ('...' if len(text) > 75 else '')
+    return '-'
+
+
 @admin.register(Command)
 class CommandAdmin(admin.ModelAdmin):
     list_display = (display_tags, 'display_code', 'title', 'short_description', )
@@ -37,22 +43,27 @@ class CommandAdmin(admin.ModelAdmin):
     def display_code(self, obj):
         return truncate_and_format(obj.code)
 
-    def display_tags(self, obj):
-        return ', '.join([tag.name for tag in obj.tags.all()])
+    display_code.short_description = 'Code'
 
     def short_description(self, obj):
-        if obj.description:
-            return obj.description[:75] + ('...' if len(obj.description) > 75 else '')
-        return '-'
+        return short_text(obj.description)
 
     short_description.short_description = 'Description'
-
-    display_tags.short_description = 'Tags'
 
 
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
-    list_display = (display_tags, 'title', 'description', 'link', )
+    list_display = (display_tags, 'title', 'short_description', 'short_link', )
     search_fields = ('title', 'code')
     list_filter = ('tags',)
     filter_horizontal = ('tags',)
+
+    def short_description(self, obj):
+        return short_text(obj.description)
+
+    short_description.short_description = 'Description'
+
+    def short_link(self, obj):
+        return short_text(obj.link)
+
+    short_link.short_description = 'Link'

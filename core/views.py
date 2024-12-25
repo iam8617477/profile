@@ -5,7 +5,7 @@ import pwd
 
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse, Http404, JsonResponse
+from django.http import Http404, JsonResponse, StreamingHttpResponse
 from django.contrib.auth.decorators import login_required
 from .models import File
 
@@ -18,13 +18,15 @@ def download_file(request, file_uuid):
     if not os.path.exists(file_path):
         raise Http404('File does not exist')
 
+    def file_iterator(file_path, chunk_size=8192):
+        with open(file_path, 'rb') as f:
+            while chunk := f.read(chunk_size):
+                yield chunk
+
     file_name = os.path.basename(file_path)
-
-    with open(file_path, 'rb') as f:
-        response = HttpResponse(f.read(), content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
-
-        return response
+    response = StreamingHttpResponse(file_iterator(file_path), content_type='application/octet-stream')
+    response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+    return response
 
 
 @login_required

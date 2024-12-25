@@ -80,4 +80,3 @@ class FileAdmin(admin.ModelAdmin):
         url = reverse('download_file', args=[obj.uuid])
         return format_html('<a href="{}" target="_blank">Download</a>', url)
     download_link.short_description = 'Download Link'
-

@@ -1,0 +1,3 @@
+[submodule "pckgs"]
+	path = pckgs
+	url = git@github.com:iam8617477/pckgs.git

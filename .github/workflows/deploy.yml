@@ -58,7 +58,6 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
-          pip install -r ./pckgs/crpt/requirements.txt
 
       - name: Wait for PostgreSQL
         run: |

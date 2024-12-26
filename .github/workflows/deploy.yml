@@ -34,6 +34,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
+
+      - name: Configure Git for submodules
+        run: |
+          git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Add submodule to PYTHONPATH
+        run: |
+          echo "PYTHONPATH=$PYTHONPATH:$(pwd)/pckgs" >> $GITHUB_ENV
 
       - name: Set up Python
         uses: actions/setup-python@v4

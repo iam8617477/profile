@@ -38,13 +38,13 @@ jobs:
           submodules: true
           fetch-depth: 0
 
-      - name: Update submodules
-        run: |
-          git submodule update --init --recursive
-
       - name: Configure Git for submodules
         run: |
           git config --global url."https://${{ secrets.GITHUB_TOKEN }}@github.com/".insteadOf "git@github.com:"
+
+      - name: Update submodules
+        run: |
+          git submodule update --init --recursive
 
       - name: Add submodule to PYTHONPATH
         run: |
@@ -58,6 +58,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install -r ./pckgs/crpt/requirements.txt
 
       - name: Wait for PostgreSQL
         run: |

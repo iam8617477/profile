@@ -1,6 +1,10 @@
+from django import forms
 from django.urls import reverse
 from django.contrib import admin
 from django.utils.html import format_html
+from django.conf import settings
+
+from pckgs.crpt.sync_encryptor import SyncEncryptor
 
 from .models import Tag, Command, Note, File
 
@@ -53,15 +57,29 @@ class CommandAdmin(admin.ModelAdmin):
     short_description.short_description = 'Description'
 
 
+class NoteForm(forms.ModelForm):
+    class Meta:
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        if 'initial' not in kwargs:
+            kwargs['initial'] = {}
+        instance = kwargs.get('instance')
+        if instance:
+            kwargs['initial'].update({'description': instance.get_decrypted_description()})
+        super().__init__(*args, **kwargs)
+
+
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
+    form = NoteForm
     list_display = (display_tags, 'title', 'short_description', 'short_link', )
     search_fields = ('title', 'code')
     list_filter = ('tags',)
     filter_horizontal = ('tags',)
 
     def short_description(self, obj):
-        return short_text(obj.description)
+        return short_text(obj.get_decrypted_description())
 
     short_description.short_description = 'Description'
 

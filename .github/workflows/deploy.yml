@@ -80,7 +80,7 @@ jobs:
             docker system prune -f
             if [ ! -d "profile" ]; then
                 echo "Cloning project repository..."
-                git clone ${{ secrets.GIT_REPO_URL }}
+                git clone --recurse-submodules ${{ secrets.GIT_REPO_URL }}
                 cd profile
             else
                 echo "Repository exists. Fetching latest changes..."
@@ -88,7 +88,9 @@ jobs:
                 git fetch
                 git switch main
                 git reset --hard origin/main
-                fi
+                echo "Updating submodules..."
+                git submodule update --init --recursive
+            fi
             docker compose down || echo "Containers are already stopped or not running"
             echo "Restarting Docker Compose..."
             SECRET_KEY=${{ secrets.SECRET_KEY }} \

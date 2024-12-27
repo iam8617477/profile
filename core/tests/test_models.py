@@ -1,5 +1,6 @@
 import pytest
-from core.models import Tag, Command, Note
+
+from core.models import Command, Note, Tag
 
 
 @pytest.mark.django_db
@@ -15,9 +16,7 @@ def test_tag():
 def test_command():
     tag = Tag.objects.create(name='Command Tag')
     created_command = Command.objects.create(
-        code='Some code for command',
-        title='Test Command',
-        description='This is a test command description'
+        code='Some code for command', title='Test Command', description='This is a test command description'
     )
     created_command.tags.add(tag)
     retrieved_command = Command.objects.get(id=created_command.id)
@@ -33,9 +32,7 @@ def test_command():
 def test_note():
     tag = Tag.objects.create(name='Note Tag')
     created_note = Note.objects.create(
-        title='Test Note',
-        description='This is a test note description',
-        link='http://example.com'
+        title='Test Note', description='This is a test note description', link='http://example.com'
     )
     created_note.tags.add(tag)
     retrieved_note = Note.objects.get(id=created_note.id)

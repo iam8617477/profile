@@ -1,12 +1,9 @@
 from django import forms
-from django.urls import reverse
 from django.contrib import admin
+from django.urls import reverse
 from django.utils.html import format_html
-from django.conf import settings
 
-from pckgs.crpt.sync_encryptor import SyncEncryptor
-
-from .models import Tag, Command, Note, File
+from .models import Command, File, Note, Tag
 
 
 @admin.register(Tag)
@@ -41,7 +38,12 @@ def short_text(text):
 
 @admin.register(Command)
 class CommandAdmin(admin.ModelAdmin):
-    list_display = (display_tags, 'display_code', 'title', 'short_description', )
+    list_display = (
+        display_tags,
+        'display_code',
+        'title',
+        'short_description',
+    )
     search_fields = ('title', 'code')
     list_filter = ('tags',)
     filter_horizontal = ('tags',)
@@ -73,7 +75,12 @@ class NoteForm(forms.ModelForm):
 @admin.register(Note)
 class NoteAdmin(admin.ModelAdmin):
     form = NoteForm
-    list_display = (display_tags, 'title', 'short_description', 'short_link', )
+    list_display = (
+        display_tags,
+        'title',
+        'short_description',
+        'short_link',
+    )
     search_fields = ('title', 'code')
     list_filter = ('tags',)
     filter_horizontal = ('tags',)
@@ -97,4 +104,5 @@ class FileAdmin(admin.ModelAdmin):
     def download_link(self, obj):
         url = reverse('download_file', args=[obj.uuid])
         return format_html('<a href="{}" target="_blank">Download</a>', url)
+
     download_link.short_description = 'Download Link'

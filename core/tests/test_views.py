@@ -1,11 +1,12 @@
 import os
-import pytest
 import uuid
 
-from django.urls import reverse
+import pytest
+
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
-from django.conf import settings
+from django.urls import reverse
 
 from core.models import File
 
@@ -53,7 +54,7 @@ def test_download_file_authenticated(client, user, file_instance):
     response = client.get(url)
 
     assert response.status_code == 200
-    assert response['Content-Disposition'] == f'attachment; filename="test_file.txt"'
+    assert response['Content-Disposition'] == 'attachment; filename="test_file.txt"'
 
 
 @pytest.mark.django_db

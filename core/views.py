@@ -1,12 +1,14 @@
 import os
-import psutil
-import socket
 import pwd
+import socket
+
+import psutil
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404
-from django.http import Http404, JsonResponse, StreamingHttpResponse
 from django.contrib.auth.decorators import login_required
+from django.http import Http404, JsonResponse, StreamingHttpResponse
+from django.shortcuts import get_object_or_404
+
 from .models import File
 
 
@@ -35,12 +37,12 @@ def system_info(request):
     cpu_percent = psutil.cpu_percent(interval=1)
 
     memory = psutil.virtual_memory()
-    total_ram = round(memory.total / (1024 ** 3), 2)
-    available_ram = round(memory.available / (1024 ** 3), 2)
+    total_ram = round(memory.total / (1024**3), 2)
+    available_ram = round(memory.available / (1024**3), 2)
 
     disk = psutil.disk_usage('/')
-    total_disk = round(disk.total / (1024 ** 3), 2)
-    free_disk = round(disk.free / (1024 ** 3), 2)
+    total_disk = round(disk.total / (1024**3), 2)
+    free_disk = round(disk.free / (1024**3), 2)
 
     hostname = socket.gethostname()
     ip_address = socket.gethostbyname(hostname)

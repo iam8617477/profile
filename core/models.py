@@ -3,6 +3,7 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+# isort: split
 from pckgs.crpt.sync_encryptor import SyncEncryptor
 
 

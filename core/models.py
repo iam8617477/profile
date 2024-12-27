@@ -1,7 +1,7 @@
 import uuid
 
-from django.db import models
 from django.conf import settings
+from django.db import models
 
 from pckgs.crpt.sync_encryptor import SyncEncryptor
 
@@ -32,10 +32,7 @@ class Note(models.Model):
     def save(self, *args, **kwargs):
         if self.description:
             encryptor = SyncEncryptor()
-            encrypted_description, _ = encryptor.encrypt(
-                data=self.description,
-                passphrase=settings.SECRET_KEY
-            )
+            encrypted_description, _ = encryptor.encrypt(data=self.description, passphrase=settings.SECRET_KEY)
             self.description = encrypted_description
 
         super().save(*args, **kwargs)
@@ -45,12 +42,8 @@ class Note(models.Model):
             return None
 
         encryptor = SyncEncryptor()
-        decrypted_description = encryptor.decrypt(
-            encrypted_data=self.description,
-            passphrase=settings.SECRET_KEY
-        )
+        decrypted_description = encryptor.decrypt(encrypted_data=self.description, passphrase=settings.SECRET_KEY)
         return decrypted_description
-
 
     def __str__(self):
         return self.title if self.title else 'Untitled'

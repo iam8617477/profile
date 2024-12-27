@@ -12,10 +12,7 @@ def encrypt_existing_descriptions(apps, schema_editor):
 
     for note in Note.objects.all():
         if note.description:
-            encrypted_description, _ = encryptor.encrypt(
-                data=note.description,
-                passphrase=settings.SECRET_KEY
-            )
+            encrypted_description, _ = encryptor.encrypt(data=note.description, passphrase=settings.SECRET_KEY)
             note.description = encrypted_description
             note.save(update_fields=['description'])
 

@@ -1,5 +1,6 @@
-import os
 import argparse
+import os
+
 from jinja2 import Environment, FileSystemLoader
 
 parser = argparse.ArgumentParser(description='Generate Nginx configuration')

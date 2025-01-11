@@ -10,6 +10,8 @@ services:
         gunicorn app.wsgi:application --workers 2 --bind 0.0.0.0:8000"
     expose:
       - '8000'
+    networks:
+      - nginx_to_web
     depends_on:
       - db
     environment:
@@ -34,6 +36,9 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - web_to_db
+      - nginx_to_web
 
   fill_nginx_conf:
     image: python:3.9
@@ -56,6 +61,9 @@ services:
     ports:
       - '80:80'
       - '443:443'
+    networks:
+      - public_network
+      - nginx_to_web
     depends_on:
       - fill_nginx_conf
       - web
@@ -67,6 +75,16 @@ services:
       - ./certbot-logs:/var/log/letsencrypt
       - certbot-challenges:/usr/share/nginx/html/.well-known/acme-challenge
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h; done;'"
+    networks:
+      - public_network
+
+networks:
+  public_network:
+    driver: bridge
+  web_to_db:
+    driver: bridge
+  nginx_to_web:
+    driver: bridge
 
 volumes:
   postgres_data:

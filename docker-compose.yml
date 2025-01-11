@@ -7,7 +7,7 @@ services:
         sleep 15;
         python manage.py migrate &&
         python manage.py collectstatic --noinput &&
-        gunicorn app.wsgi:application --bind 0.0.0.0:8000"
+        gunicorn app.wsgi:application --workers 2 --bind 0.0.0.0:8000"
     expose:
       - '8000'
     depends_on:

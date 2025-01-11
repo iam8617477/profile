@@ -83,8 +83,10 @@ networks:
     driver: bridge
   web_to_db:
     driver: bridge
+    internal: true
   nginx_to_web:
     driver: bridge
+    internal: true
 
 volumes:
   postgres_data:

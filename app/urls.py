@@ -18,7 +18,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from core.views import analyze_request
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/', include('core.urls')),
+    path('ar/<uuid:uuid>/', analyze_request, name='analyze_request'),
 ]

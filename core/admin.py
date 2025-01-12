@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from .models import Command, File, Note, Tag
+from .models import AR, Command, File, Note, Tag
 
 
 @admin.register(Tag)
@@ -106,3 +106,9 @@ class FileAdmin(admin.ModelAdmin):
         return format_html('<a href="{}" target="_blank">Download</a>', url)
 
     download_link.short_description = 'Download Link'
+
+
+@admin.register(AR)
+class ARAdmin(admin.ModelAdmin):
+    list_display = ('uuid', 'data', 'created_at', 'updated_at')
+    search_fields = ('uuid',)

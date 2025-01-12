@@ -1,3 +1,4 @@
+import json
 import os
 import uuid
 
@@ -8,7 +9,7 @@ from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from django.urls import reverse
 
-from core.models import File
+from core.models import AR, File
 
 
 @pytest.fixture
@@ -64,3 +65,45 @@ def test_download_file_not_authenticated(client, file_instance):
 
     assert response.status_code == 302
     assert response.url.startswith('/accounts/login/?next=')
+
+
+@pytest.mark.django_db
+def test_non_get_request(client):
+    ar_record = AR.objects.create(uuid='123e4567-e89b-12d3-a456-426614174000', data={})
+    url = reverse('analyze_request', kwargs={'uuid': ar_record.uuid})
+    response = client.post(url, data={'param1': 'value1'})
+
+    assert response.status_code == 405
+
+
+@pytest.mark.django_db
+def test_get_request_with_existing_data(client):
+    ar_record = AR.objects.create(uuid='123e4567-e89b-12d3-a456-426614174000', data={'existing': 'data'})
+    url = reverse('analyze_request', kwargs={'uuid': ar_record.uuid})
+    response = client.get(url)
+
+    assert response.status_code == 404
+
+
+@pytest.mark.django_db
+def test_get_request_with_body(client):
+    ar_record = AR.objects.create(uuid='123e4567-e89b-12d3-a456-426614174000', data={})
+    url = reverse('analyze_request', kwargs={'uuid': ar_record.uuid})
+    params = {'param1': 'value1', 'param2': 'value2'}
+    body = {'key': 'value'}
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    response = client.get(
+        url + '?param1=value1&param2=value2', body=json.dumps(body), headers=headers, HTTP_CUSTOM_HEADER='header_value'
+    )
+
+    assert response.status_code == 200
+
+    ar_record.refresh_from_db()
+    assert ar_record.data['method'] == 'GET'
+    assert ar_record.data['GET_params'] == params
+    assert ar_record.data['content_type'] == 'application/json'
+
+    assert 'HTTP_CUSTOM_HEADER' in ar_record.data['headers']
+    assert ar_record.data['headers']['HTTP_CUSTOM_HEADER'] == 'header_value'

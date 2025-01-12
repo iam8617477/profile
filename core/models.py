@@ -69,3 +69,24 @@ class AR(models.Model):
 
     def __str__(self):
         return str(self.uuid)
+
+
+class DeployProject(models.Model):
+    config_file = models.TextField()
+
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('warning', 'Warning'),
+        ('high', 'High'),
+        ('critical', 'Critical'),
+    ]
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    recommendations = models.TextField(null=True, blank=True)
+    commit_hash = models.CharField(max_length=40, null=True, blank=True)
+    deploy_date = models.DateTimeField(auto_now_add=True)
+    worked_on = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Deploy {self.id} - Status: {self.get_status_display()}"

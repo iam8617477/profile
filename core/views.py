@@ -1,3 +1,4 @@
+import json
 import os
 import pwd
 import socket
@@ -6,10 +7,10 @@ import psutil
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, JsonResponse, StreamingHttpResponse
+from django.http import Http404, HttpResponse, JsonResponse, StreamingHttpResponse
 from django.shortcuts import get_object_or_404
 
-from .models import File
+from .models import AR, File
 
 
 @login_required
@@ -62,3 +63,20 @@ def system_info(request):
     }
 
     return JsonResponse(data)
+
+
+def analyze_request(request, uuid):
+    if request.method != 'GET':
+        return HttpResponse(status=405)
+    ar_record = get_object_or_404(AR, uuid=uuid)
+    if ar_record.data:
+        return HttpResponse(status=404)
+
+    ar_record.data = {
+        'method': request.method,
+        'GET_params': request.GET.dict(),
+        'content_type': request.content_type,
+        'headers': {key: value for key, value in request.META.items() if key.startswith('HTTP_')},
+    }
+    ar_record.save()
+    return HttpResponse(status=200)

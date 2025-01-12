@@ -59,3 +59,13 @@ class File(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class AR(models.Model):
+    uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
+    data = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return str(self.uuid)

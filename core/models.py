@@ -62,8 +62,8 @@ class File(models.Model):
 
 
 class AR(models.Model):
-    uuid = models.UUIDField(primary_key=True, editable=False, unique=True)
-    data = models.JSONField(default=dict)
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    data = models.JSONField(default=dict, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -53,6 +53,7 @@ jobs:
       POSTGRES_PASSWORD: test_password
       POSTGRES_DB: test_db
       POSTGRES_PORT: 5432
+      OPENAI_API_KEY: test_key
 
     steps:
       - name: Checkout code
@@ -140,6 +141,7 @@ jobs:
             POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
             REMOTE_HOST=${{ secrets.REMOTE_HOST }} \
             REMOTE_HOST_NAME=${{ secrets.REMOTE_HOST_NAME }} \
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }} \
             docker compose -f docker-compose.yml up -d --build --scale web=1
 
             echo "Deployment complete!"

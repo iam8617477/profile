@@ -70,6 +70,7 @@ class AR(models.Model):
     def __str__(self):
         return str(self.uuid)
 
+
 #
 # class DeployProject(models.Model):
 #     config_file = models.TextField()

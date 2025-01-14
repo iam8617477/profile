@@ -1,8 +1,9 @@
+from more_admin_filters import MultiSelectRelatedFilter
+
 from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
-from more_admin_filters import MultiSelectRelatedFilter
 
 from .models import AR, Command, File, Note, Tag
 
@@ -46,7 +47,7 @@ class CommandAdmin(admin.ModelAdmin):
         'short_description',
     )
     search_fields = ('title', 'code')
-    list_filter = (('tags', MultiSelectRelatedFilter), )
+    list_filter = (('tags', MultiSelectRelatedFilter),)
     filter_horizontal = ('tags',)
 
     def display_code(self, obj):
@@ -83,7 +84,7 @@ class NoteAdmin(admin.ModelAdmin):
         'short_link',
     )
     search_fields = ('title', 'code')
-    list_filter = (('tags', MultiSelectRelatedFilter), )
+    list_filter = (('tags', MultiSelectRelatedFilter),)
     filter_horizontal = ('tags',)
 
     def short_description(self, obj):

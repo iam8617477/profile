@@ -64,6 +64,7 @@ services:
     networks:
       - public_network
       - nginx_to_web
+      - shared_network
     depends_on:
       - fill_nginx_conf
       - web
@@ -87,6 +88,9 @@ networks:
   nginx_to_web:
     driver: bridge
     internal: true
+  shared_network:
+    name: project_shared_network
+    driver: bridge
 
 volumes:
   postgres_data:

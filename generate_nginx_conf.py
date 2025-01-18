@@ -11,7 +11,8 @@ template_dir = os.path.dirname(args.template)
 env = Environment(loader=FileSystemLoader(template_dir))
 template = env.get_template(os.path.basename(args.template))
 domain_name = os.getenv('DOMAIN_NAME')
-output = template.render(DOMAIN_NAME=domain_name)
+sub_domain_name = os.getenv('SUB_DOMAIN_NAME')
+output = template.render(DOMAIN_NAME=domain_name, SUB_DOMAIN_NAME=sub_domain_name)
 with open(args.output, 'w') as f:
     f.write(output)
 

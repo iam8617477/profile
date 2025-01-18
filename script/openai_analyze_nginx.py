@@ -1,15 +1,13 @@
 import argparse
 import re
+
 from openai import OpenAI
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Analyze and optimize Nginx configurations using OpenAI GPT.")
     parser.add_argument(
-        '--config-file',
-        required=True,
-        type=str,
-        help="Path to the Nginx configuration file to be analyzed"
+        '--config-file', required=True, type=str, help="Path to the Nginx configuration file to be analyzed"
     )
     return parser.parse_args()
 
@@ -61,16 +59,18 @@ def main():
                     'role': 'system',
                     'content': (
                         'You are an expert in configuring and optimizing Nginx servers. '
-                        'Review the given configuration and provide one overall recommendation and its corresponding status. '
+                        'Review the given configuration and provide one overall recommendation and its corresponding '
+                        'status. '
                         'Your response should follow this structure: '
                         '1. Recommendation: [The overall recommendation here]. '
                         '2. Recommendation Status: [One of: "warning", "high", "critical"]. '
                         'The response must only contain these two fields and be formatted exactly as shown.'
-                    )
+                    ),
                 },
                 {
                     'role': 'user',
-                    'content': f"Here's my Nginx configuration. Please review it and provide recommendations:\n\n{nginx_config}"
+                    'content': f"Here's my Nginx configuration. Please review it and provide recommendations:"
+                    f"\n\n{nginx_config}",
                 },
             ],
         )
@@ -82,7 +82,7 @@ def main():
 
     try:
         recommendation, status = parse_recommendations_and_status(response_content)
-        print(f"Configuration analyzed successfully.")
+        print("Configuration analyzed successfully.")
         print(f"Recommendation: {recommendation}")
         print(f"Status: {status}")
 

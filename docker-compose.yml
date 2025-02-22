@@ -11,7 +11,7 @@ services:
     expose:
       - '8000'
     networks:
-      - nginx_to_web
+      - shared_network
       - web_to_db
     depends_on:
       - db
@@ -64,7 +64,6 @@ services:
       - '443:443'
     networks:
       - public_network
-      - nginx_to_web
       - shared_network
     depends_on:
       - fill_nginx_conf
@@ -84,9 +83,6 @@ networks:
   public_network:
     driver: bridge
   web_to_db:
-    driver: bridge
-    internal: true
-  nginx_to_web:
     driver: bridge
     internal: true
   shared_network:
